@@ -38,6 +38,9 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
 #maincontent {
   background-color: #f3f3f3;
   min-height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
 }
 #footer {
   background-color: #444;
@@ -53,7 +56,9 @@ nav {
   width: 100%;
   height: 80px;
   background-color: #252831;
-  text-align:center;
+  text-align: center;
+  justify-content: center;
+  display: flex;
 }
 nav h1 {
   margin: auto;
@@ -71,7 +76,6 @@ nav h1 a {
     background-color: #eee;
     font-size: 17px;
     margin: 0;
-    width: calc(50% - 80px);
 }
 
 /* Display list items side by side */
@@ -105,17 +109,20 @@ nav h1 a {
 }
 /* ====================== Restaurant Filtering ====================== */
 .filter-options {
-  width: 100%;
-  height: 50px;
+  max-width: 100%;
   background-color: #3397DB;
   align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 10px 0;
 }
 .filter-options h2 {
   color: white;
   font-size: 1rem;
   font-weight: normal;
   line-height: 1;
-  margin: 0 20px;
+  margin: 0 10px;
 }
 .filter-options select {
   background-color: white;
@@ -134,19 +141,24 @@ nav h1 a {
   background-color: #f3f3f3;
   list-style: outside none none;
   margin: 0;
-  padding: 30px 15px 60px;
+  padding: 30px 0 60px;
   text-align: center;
+  max-width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 #restaurants-list li {
   background-color: #fff;
   border: 2px solid #ccc;
   font-family: Arial,sans-serif;
-  margin: 15px;
+  margin: 0;
   min-height: 380px;
-  padding: 0 30px 25px;
-  text-align: left;
-  width: 270px;
+  padding: 0 0 20px;
+  text-align: center;
+  max-width: 300px;
 }
+
 #restaurants-list .restaurant-img {
   background-color: #ccc;
   display: block;
@@ -182,20 +194,35 @@ nav h1 a {
   text-transform: uppercase;
 }
 
+@media screen and (max-width:570px) {
+  #restaurants-list li {
+    width: 100%;
+    max-width: 100%;
+  }
+  .filter-options {
+  }
+  .filter-options h2 {
+    width: 100%;
+  }
+  .filter-options select {
+    flex: 0.5;
+  }
+}
+@media screen and (min-width: 571px) {
+  #restaurants-list li {
+    width: calc(50% - 5px);
+  }
+}
+
 /* ====================== Restaurant Details ====================== */
 .inside header {
-  position: fixed;
-  top: 0;
   width: 100%;
   z-index: 1000;
 }
 .inside #map-container {
   background: blue none repeat scroll 0 0;
-  height: 87%;
-  position: fixed;
-  right: 0;
-  top: 80px;
-  width: 50%;
+  height: 400px;
+  width: 100%;
 }
 .inside #map {
   background-color: #ccc;
@@ -203,26 +230,29 @@ nav h1 a {
   width: 100%;
 }
 .inside #footer {
-  bottom: 0;
-  position: absolute;
-  width: 50%;
 }
+
 #restaurant-name {
   color: #f18200;
   font-family: Arial,sans-serif;
   font-size: 20pt;
   font-weight: 200;
   letter-spacing: 0;
-  margin: 15px 0 30px;
+  margin: 20px 0 20px;
   text-transform: uppercase;
   line-height: 1.1;
 }
 #restaurant-img {
-	width: 90%;
+  width: 100%;
+  height: 50%;
 }
 #restaurant-address {
-  font-size: 12pt;
+  font-size: 16px;
   margin: 10px 0px;
+  width: 100%;
+  text-decoration: underline;
+  display: flex;
+  justify-content: center;
 }
 #restaurant-cuisine {
   background-color: #333;
@@ -234,16 +264,19 @@ nav h1 a {
   padding: 2px 0;
   text-align: center;
   text-transform: uppercase;
-	width: 90%;
+  width: 100%;
 }
 #restaurant-container, #reviews-container {
   border-bottom: 1px solid #d9d9d9;
   border-top: 1px solid #fff;
-  padding: 140px 40px 30px;
-  width: 50%;
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding-bottom: 20px;
 }
 #reviews-container {
-  padding: 30px 40px 80px;
+  padding: 20px 20px;
 }
 #reviews-container h2 {
   color: #f58500;
@@ -272,4 +305,22 @@ nav h1 a {
 }
 #restaurant-hours td {
   color: #666;
+}
+@media screen and (max-width:800px) {
+
+}
+@media screen and (min-width:801px) {
+  #restaurant-name {
+    width: 100%;
+    order: 1;
+  }
+  #restaurant-presentation {
+    width: 50%;
+    height: 100%;
+    order: 2;
+  }
+  #restaurant-details {
+    order: 3;
+    width: 50%;
+  }
 }
