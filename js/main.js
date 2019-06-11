@@ -175,11 +175,13 @@ createRestaurantHTML = (restaurant) => {
   const neighborhood = document.createElement('p');
   neighborhood.innerHTML = restaurant.neighborhood;
   neighborhood.className = 'restaurant-neighborhood';
+
   li.append(neighborhood);
 
   const address = document.createElement('p');
   address.innerHTML = restaurant.address;
   address.className = 'restaurant-address';
+
   li.append(address);
 
   const moreLabel = document.createAttribute('aria-label');
