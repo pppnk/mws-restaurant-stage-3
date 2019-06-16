@@ -1,3 +1,46 @@
+const idbStore = (function() {
+  'use strict';
+
+  if (!('indexedDB' in window)) {
+    console.log('This browser does not support IndexedDB');
+    return;
+  }
+
+  /**
+   * Init IndexDB store
+   * */
+  const dbPromise = idb.open("udacity-restaurant", 2, upgradeDB => {
+    switch (upgradeDB.oldVersion) {
+      case 0:
+        upgradeDB.createObjectStore("restaurants", {keyPath: "id"});
+        initStore();
+    }
+  });
+
+  function initStore(){
+    fetch(DBHelper.DATABASE_URL).then(function (response) {
+      return response.json();
+    }).then(function(restaurants){
+      dbPromise.then(function (db) {
+        if (!db) return;
+        var tx = db.transaction('restaurants', 'readwrite');
+        var store = tx.objectStore('restaurants');
+        restaurants.forEach(function (restaurant) {
+          store.put(restaurant)
+        });
+      });
+      callback(null, restaurants);
+    }).catch(function (err) {
+      const error = (`Unable to store restaurants data ${err}`);
+    });
+  }
+
+  return {
+    dbPromise: (dbPromise),
+    initStore: (initStore)
+  };
+})();
+
 /**
  * Common database helper functions.
  */
@@ -8,27 +51,33 @@ class DBHelper {
    * Change this to restaurants.json file location on your server.
    */
   static get DATABASE_URL() {
-    const port = 8000 // Change this to your server port
+    const port = 1337; // Change this to your server port
     return `http://localhost:${port}/data/restaurants.json`;
+  }
+
+  static getRestaurants(){
+    return idbStore.dbPromise.then(function(db) {
+      var tx = db.transaction('restaurants', 'readonly');
+      var store = tx.objectStore('restaurants');
+      return store.getAll();
+    });
   }
 
   /**
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
-    let xhr = new XMLHttpRequest();
-    xhr.open('GET', DBHelper.DATABASE_URL);
-    xhr.onload = () => {
-      if (xhr.status === 200) { // Got a success response from server!
-        const json = JSON.parse(xhr.responseText);
-        const restaurants = json.restaurants;
+    const fetchURL= DBHelper.DATABASE_URL;
+    this.getRestaurants().then(function(restaurants){
+      return restaurants;
+    });
+    fetch(fetchURL, {method: "GET"}).then(response => {
+      response.json().then(restaurants => {
         callback(null, restaurants);
-      } else { // Oops!. Got an error from server.
-        const error = (`Request failed. Returned status of ${xhr.status}`);
-        callback(error, null);
-      }
-    };
-    xhr.send();
+      });
+    }).catch(error => {
+      callback(`Request failed: ${error.message}`, null);
+    });
   }
 
   /**
@@ -107,18 +156,21 @@ class DBHelper {
    * Fetch all neighborhoods with proper error handling.
    */
   static fetchNeighborhoods(callback) {
-    // Fetch all restaurants
-    DBHelper.fetchRestaurants((error, restaurants) => {
-      if (error) {
-        callback(error, null);
-      } else {
-        // Get all neighborhoods from all restaurants
-        const neighborhoods = restaurants.map((v, i) => restaurants[i].neighborhood)
-        // Remove duplicates from neighborhoods
-        const uniqueNeighborhoods = neighborhoods.filter((v, i) => neighborhoods.indexOf(v) == i)
-        callback(null, uniqueNeighborhoods);
-      }
+    const fetchURL= DBHelper.DATABASE_URL;
+    this.getRestaurants().then(restaurants => this.getNeighborhoods(restaurants));
+    fetch(fetchURL, {method: "GET"}).then(response => {
+      response.json().then(restaurants => {
+            idbStore.initStore();
+            callback(null, this.getNeighborhoods(restaurants));
+      });
+    }).catch(error => {
+      callback(`Request failed: ${error.message}`, null);
     });
+  }
+
+  static getNeighborhoods(restaurants){
+    const neighborhoods = restaurants.map((v, i) => restaurants[i].neighborhood);
+    return neighborhoods.filter((v, i) => neighborhoods.indexOf(v) == i);
   }
 
   /**
@@ -160,7 +212,7 @@ class DBHelper {
   /**
    * Map marker for a restaurant.
    */
-   static mapMarkerForRestaurant(restaurant, map) {
+  static mapMarkerForRestaurant(restaurant, map) {
     // https://leafletjs.com/reference-1.3.0.html#marker  
     const marker = new L.marker([restaurant.latlng.lat, restaurant.latlng.lng],
       {title: restaurant.name,
@@ -169,7 +221,7 @@ class DBHelper {
       })
       marker.addTo(newMap);
     return marker;
-  } 
+  }
   /* static mapMarkerForRestaurant(restaurant, map) {
     const marker = new google.maps.Marker({
       position: restaurant.latlng,
