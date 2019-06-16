@@ -52,7 +52,7 @@ class DBHelper {
    */
   static get DATABASE_URL() {
     const port = 1337; // Change this to your server port
-    return `http://localhost:${port}/data/restaurants.json`;
+    return `http://localhost:${port}/restaurants`;
   }
 
   static getRestaurants(){
@@ -72,9 +72,12 @@ class DBHelper {
       return restaurants;
     });
     fetch(fetchURL, {method: "GET"}).then(response => {
-      response.json().then(restaurants => {
-        callback(null, restaurants);
-      });
+      response
+          .clone()
+          .json()
+          .then(
+              (restaurants) => callback(null, restaurants)
+          );
     }).catch(error => {
       callback(`Request failed: ${error.message}`, null);
     });
