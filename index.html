@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
+  <meta name="Description" content="Restaurant Listings">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
   <link rel="stylesheet" href="css/styles.css">
@@ -21,20 +22,19 @@
 
     <section id="map-container" aria-hidden="true" aria-label="map container">
       <div id="map" aria-label="map" aria-hidden="true"></div>
-      <label id="map-description">Restaurants map</label>
     </section>
 
     <section role="main">
-      <div class="filter-options" aria-label="filter options" role="menu">
-        <h2>Filter Results</h2>
-        <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()">
-          <option value="all">All Neighborhoods</option>
+      <div class="filter-options" aria-label="filter options">
+        <h2 role="presentation">Filter Results</h2>
+        <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()" role="listbox" aria-label="Section Filter Results">
+          <option value="all" aria-label="All Neighborhoods option" role="option">All Neighborhoods</option>
         </select>
-        <select id="cuisines-select" name="cuisines" onchange="updateRestaurants()">
+        <select id="cuisines-select" name="cuisines" onchange="updateRestaurants()" role="listbox" aria-label="Cuisines Filter Results">
           <option value="all" role="option">All Cuisines</option>
         </select>
       </div>
-      <ul id="restaurants-list"></ul>
+      <ul id="restaurants-list" role="list"></ul>
     </section>
 
   </main>
