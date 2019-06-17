@@ -52,7 +52,7 @@ class DBHelper {
    */
   static get DATABASE_URL() {
     const port = 1337; // Change this to your server port
-    return `http://localhost:${port}/restaurants`;
+    return `http://localhost:${port}`;
   }
 
   static getRestaurants(){
@@ -67,7 +67,7 @@ class DBHelper {
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
-    const fetchURL= DBHelper.DATABASE_URL;
+    const fetchURL= DBHelper.DATABASE_URL + '/restaurants';
     this.getRestaurants().then(function(restaurants){
       return restaurants;
     });
@@ -156,10 +156,24 @@ class DBHelper {
   }
 
   /**
+   * Fetch reviews by restaurant ID
+   */
+  static getReviewsByRestaurant(id, callback) {
+    fetch(`${DBHelper.DATABASE_URL}/reviews/?restaurant_id=${id}`).then(response => {
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+      callback(null, response.json());
+    }).catch(err => {
+      callback(err, null);
+    });
+  }
+
+  /**
    * Fetch all neighborhoods with proper error handling.
    */
   static fetchNeighborhoods(callback) {
-    const fetchURL= DBHelper.DATABASE_URL;
+    const fetchURL= DBHelper.DATABASE_URL + '/restaurants';
     this.getRestaurants().then(restaurants => this.getNeighborhoods(restaurants));
     fetch(fetchURL, {method: "GET"}).then(response => {
       response.json().then(restaurants => {

@@ -333,6 +333,7 @@ nav h1 a {
   margin: auto;
   padding: 20px 20px;
   flex-direction: column;
+  width: 100%;
 }
 
 #reviews-container h2 {
@@ -341,7 +342,61 @@ nav h1 a {
   font-weight: 300;
   letter-spacing: -1px;
   padding-bottom: 1pt;
+  margin-bottom: 5px;
 }
+
+#reviews-container h3 {
+    color: #252831;
+    font-size: 16pt;
+    font-weight: 300;
+    letter-spacing: -1px;
+    padding-bottom: 1pt;
+    margin-bottom: 5px;
+}
+
+#review-form-list {
+    display: flex;
+    padding: 0;
+    flex-wrap: wrap;
+    flex-direction: column;
+    margin: 0;
+}
+
+#review-form-list .review-form-list-row {
+    flex: 1;
+    flex-direction: row;
+    display: flex;
+}
+
+#review-form-list .review-form-item {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    flex-direction: row;
+    flex: 1;
+}
+
+#review-form-list .review-form-item > label {
+    font-size: 11pt;
+    display: flex;
+    padding: 5px 10px;
+}
+
+#review-form-list .review-form-item > textarea {
+    flex: 1;
+}
+
+#review-form-list button {
+  margin-left: auto;
+  padding: 8px 16px;
+  border: none;
+  background: #333;
+  color: #f2f2f2;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  border-radius: 2px;
+}
+
 #reviews-list {
   margin: 0;
   padding: 0;

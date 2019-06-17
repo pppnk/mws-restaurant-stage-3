@@ -59,6 +59,43 @@
 
     <!-- Beginning reviews -->
     <section id="reviews-container" tabindex="0" aria-label="Reviews Section">
+      <h2>Reviews</h2>
+      <h3>Add Review</h3>
+      <form id="add-review">
+        <div id="review-form-list">
+          <div class="review-form-list-row">
+            <div class="review-form-item">
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" aria-label="name" autofocus>
+            </div>
+            <div class="review-form-item">
+              <label for="rating">Rating</label>
+              <select id="rating" name="rating" aria-label="rating">
+                <option value=1 aria-label="Rating 1">1</option>
+                <option value=2 aria-label="Rating 2">2</option>
+                <option value=3 aria-label="Rating 3">3</option>
+                <option value=4 aria-label="Rating 4">4</option>
+                <option value=5 aria-label="Rating 5">5</option>
+              </select>
+            </div>
+          </div>
+          <div class="review-form-list-row">
+            <div class="review-form-item">
+              <label for="comment">Comment</label>
+            </div>
+          </div>
+          <div class="review-form-list-row">
+            <div class="review-form-item">
+              <textarea name="comment" id="comment" cols="30" rows="10"></textarea>
+            </div>
+          </div>
+          <div class="review-form-list-row">
+            <div class="review-form-item">
+              <input type="submit" class="button" value="Submit" aria-label="Submit review">
+            </div>
+          </div>
+        </div>
+      </form>
       <ul id="reviews-list" tabindex="0" aria-label="Reviews"></ul>
     </section>
     <!-- End reviews -->
