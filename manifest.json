@@ -1,0 +1,25 @@
+{
+  "name": "Restaurant Reviews",
+  "short_name": "mws",
+  "scope": "/",
+  "theme_color": "#3397DB",
+  "background_color":"#3397DB",
+  "display": "standalone",
+  "description": "Restaurant Reviews without SW",
+  "start_url": "/index.html",
+  "orientation": "portrait-primary",
+  "lang": "en-US",
+  "icons": [{
+    "src": "/img/restaurant_icon.png",
+    "sizes": "144x144",
+    "type": "image/png"
+  }, {
+    "src": "/img/restaurant_icon_512.png",
+    "sizes": "512x512",
+    "type": "image/png"
+  }, {
+    "src": "/img/restaurant_icon_256.png",
+    "sizes": "192x192",
+    "type": "image/png"
+  }]
+}

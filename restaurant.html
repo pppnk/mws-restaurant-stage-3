@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="Description" content="Restaurant Details">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
   <!-- Normalize.css for better cross-browser consistency -->
   <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
   <!-- Main CSS file -->
@@ -21,7 +22,7 @@
       <h1><a href="/" role="link">Restaurant Reviews</a></h1>
     </nav>
     <!-- Beginning breadcrumb -->
-    <nav aria-label="Breadcrumb">
+    <nav aria-label="Breadcrumb" role="navigation">
       <ul id="breadcrumb" aria-label="breadcrumb" role="menubar">
         <li><a href="/">Home</a></li>
       </ul>
@@ -53,7 +54,7 @@
 
     <!-- Beginning map -->
     <section id="map-container">
-      <div id="map" aria-hidden="true" aria-label="Restaurant Map"></div>
+      <div id="map" role="application" aria-hidden="true" aria-label="Restaurant Map"></div>
     </section>
     <!-- End map -->
 
