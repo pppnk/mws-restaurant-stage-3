@@ -384,6 +384,8 @@ nav h1 a {
 
 #review-form-list .review-form-item > textarea {
     flex: 1;
+    font-size: 11pt;
+    padding: 1px 8px;
 }
 
 #review-form-list button {
