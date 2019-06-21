@@ -379,7 +379,7 @@ nav h1 a {
 #review-form-list .review-form-item > label {
     font-size: 11pt;
     display: flex;
-    padding: 5px 10px;
+    padding: 10px 10px;
 }
 
 #review-form-list .review-form-item > textarea {
@@ -414,6 +414,31 @@ nav h1 a {
 
 #reviews-list li p {
   margin: 0 0 10px;
+}
+
+.review-form-item select {
+    width: 50px;
+    height: 30px;
+    font-size: 11pt;
+}
+
+.review-form-item #name {
+    height: 25px;
+    font-size: 11pt;
+    padding: 1px 8px;
+    min-width: 200px;
+}
+
+#submit-review-button {
+    background-color: #bc400b;
+    border: 3px solid #eee;
+    color: #fff;
+    cursor: pointer;
+    font-size: 11pt;
+    margin: 15px 0 0;
+    padding: 8px 30px 10px;
+    text-align: center;
+    text-decoration: none;
 }
 
 #reviews-list li p:nth-child(1) {
