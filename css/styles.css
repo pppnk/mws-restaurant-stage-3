@@ -356,7 +356,7 @@ nav h1 a {
 
 #review-form-list {
     display: flex;
-    padding: 0;
+    padding: 0 0 10px 0;
     flex-wrap: wrap;
     flex-direction: column;
     margin: 0;
@@ -405,7 +405,7 @@ nav h1 a {
 }
 #reviews-list li {
   background-color: #fff;
-  border: 2px solid #f3f3f3;
+  border: 2px solid gray;
   display: block;
   list-style-type: none;
   margin-bottom: 20px;
@@ -490,17 +490,30 @@ nav h1 a {
     #reviews-container {
         width: 100%;
     }
+
+    #reviews-content {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+    }
+
     #reviews-list{
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
         width: 100%;
     }
+
     #reviews-list li {
         flex: 1;
         margin: 5px;
         min-width: 270px;
     }
+
+    #review-form-list .review-form-item > textarea {
+        height: 100px;
+    }
+
     #restaurant-hours-container {
         flex: 1 1 auto;
         margin: auto;
@@ -539,5 +552,33 @@ nav h1 a {
     }
     #restaurant-hours tr td:first-child {
         width: 40%;
+    }
+}
+
+@media screen and (min-width: 1100px) {
+    #reviews-content {
+        flex-direction: row;
+        flex-wrap: nowrap;
+    }
+
+    #review-form-list {
+        flex-direction: row;
+        align-content: flex-start;
+        flex-wrap: wrap;
+        width: 500px;
+    }
+
+    #review-form-list .review-form-list-row {
+        flex-direction: row;
+        min-width: 100%;
+    }
+
+    #review-form-list .review-form-item {
+        padding-right: 10px;
+    }
+
+    #review-form-list .review-form-item > textarea {
+        height: 250px;
+        margin: 20px;
     }
 }

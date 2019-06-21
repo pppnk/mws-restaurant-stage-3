@@ -129,24 +129,26 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
  * Create all reviews HTML and add them to the webpage.
  */
 fillReviewsHTML = (reviews = self.restaurant.reviews) => {
-  const container = document.getElementById('reviews-container');
+  const container = document.getElementById('reviews-content');
   // Get all Reviews
   DBHelper.getReviewsByRestaurant(self.restaurant.id, (error, reviews) => {
     if (error){
       return;
     }
-    const containerReview = document.getElementById('review-form-container');
-    const buttonAddReview = document.getElementById('reviews-add');
-    const form = document.getElementById("add-review");
-    if (!reviews) {
-      const noReviews = document.createElement('p');
-      noReviews.innerHTML = 'No reviews yet!';
-      container.appendChild(noReviews);
-      return;
-    }
+    const errorElement = document.createElement('p');
     const ul = document.getElementById('reviews-list');
-    reviews.forEach(review => {
-      ul.appendChild(createReviewHTML(review));
+    reviews.then(results => {
+      if(!results || !results.length) {
+        errorElement.innerHTML = 'No reviews yet!';
+        container.appendChild(errorElement);
+      } else {
+        results.forEach(result => {
+          ul.appendChild(createReviewHTML(result));
+        });
+      }
+    }).catch(error => {
+      errorElement.innerHTML = 'Error while retrieving reviews';
+      container.appendChild(errorElement);
     });
     container.appendChild(ul);
   });
@@ -162,7 +164,8 @@ createReviewHTML = (review) => {
   li.appendChild(name);
 
   const date = document.createElement('p');
-  date.innerHTML = review.date;
+  let dateValue = new Date(review.updatedAt || review.createdAt);
+  date.innerHTML = dateValue.toGMTString();
   li.appendChild(date);
 
   const rating = document.createElement('p');

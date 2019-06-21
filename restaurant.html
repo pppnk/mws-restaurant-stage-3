@@ -62,8 +62,8 @@
     <section id="reviews-container" tabindex="0" aria-label="Reviews Section">
       <h2>Reviews</h2>
       <h3>Add Review</h3>
-      <form id="add-review">
-        <div id="review-form-list">
+      <div id="reviews-content">
+        <form id="review-form-list">
           <div class="review-form-list-row">
             <div class="review-form-item">
               <label for="name">Name</label>
@@ -93,9 +93,11 @@
               <input id="submit-review-button" type="submit" class="button" value="Submit" aria-label="Submit review">
             </div>
           </div>
-        </div>
-      </form>
-      <ul id="reviews-list" tabindex="0" aria-label="Reviews"></ul>
+        </form>
+
+        <ul id="reviews-list" tabindex="0" aria-label="Reviews"></ul>
+
+      </div>
     </section>
     <!-- End reviews -->
   </main>
