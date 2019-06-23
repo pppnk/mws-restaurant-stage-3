@@ -1,4 +1,5 @@
 let restaurant;
+let restaurantId;
 var newMap;
 
 /**
@@ -88,6 +89,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
 
   const image = document.getElementById('restaurant-img');
   image.className = 'restaurant-img';
+  restaurantId = restaurant.id;
 
   const imageSources = DBHelper.imageUrlForRestaurant(restaurant.id);
   image.src = imageSources.src;
@@ -135,7 +137,12 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
     if (error){
       return;
     }
-    const errorElement = document.createElement('p');
+    if (!reviews) {
+      const noReviews = document.createElement('p');
+      noReviews.innerHTML = 'No reviews yet!';
+      container.appendChild(noReviews);
+      return;
+    }
     const ul = document.getElementById('reviews-list');
     reviews.then(results => {
       if(!results || !results.length) {
@@ -204,3 +211,53 @@ getParameterByName = (name, url) => {
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 };
+
+function validateFormOnSubmit(event) {
+  const errorsSection = document.getElementById("review-form-errors-section");
+  const errors = document.getElementById("review-form-errors");
+  let name = document.getElementById("name").value;
+  let comment = document.getElementById("comment").value;
+  const rating = document.getElementById("rating").value;
+  name = name.trim();
+  comment = comment.trim();
+
+  let errorMessage = '';
+  let validForm = true;
+  if(!name || !name.length || name.length < 5){
+    validForm = false;
+    errorMessage += 'You must enter a valid name (at least 5 characters)\n';
+  }
+  if(!comment || !comment.length || comment.length < 5){
+    validForm = false;
+    errorMessage += 'You must enter a comment at least 5 characters long\n';
+  }
+  errors.innerText = errorMessage;
+  if(validForm){
+    // event.preventDefault();
+    handleFormSubmit(restaurantId, name, comment, rating);
+    errorsSection.style.display = 'none';
+  } else {
+    errorsSection.style.display = 'flex';
+  }
+  return false;
+}
+
+function handleFormSubmit(restaurantId, name, comment, rating){
+  const ul = document.getElementById('reviews-list');
+  const review = {
+    id: Date.now(),
+    restaurant_id: restaurantId,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    name: name,
+    comments: comment,
+    rating: rating
+  };
+  DBHelper.addReview(review, (review, error) => {
+    if (!review || error) {
+      console.log("Error while adding review");
+    }
+    ul.appendChild(createReviewHTML(review));
+    document.getElementById("add-review").reset();
+  });
+}

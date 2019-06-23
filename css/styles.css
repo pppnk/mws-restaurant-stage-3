@@ -460,6 +460,15 @@ nav h1 a {
     text-align: justify;
 }
 
+#review-form-errors-section {
+    display: none;
+}
+
+#review-form-errors {
+    font-size: 10pt;
+    color: red;
+}
+
 #restaurant-hours td {
   color: #666;
 }
@@ -530,7 +539,7 @@ nav h1 a {
 
 @media screen and (min-width: 900px) {
     #reviews-list li {
-        min-width: auto;
+        min-width: 250px;
     }
     #restaurant-address {
         flex: 1;
@@ -561,11 +570,32 @@ nav h1 a {
         flex-wrap: nowrap;
     }
 
-    #review-form-list {
+    #add-review {
         flex-direction: row;
         align-content: flex-start;
         flex-wrap: wrap;
         width: 500px;
+    }
+
+    #reviews-container-content {
+        display: flex;
+    }
+
+    #reviews-list {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    #reviews-list li {
+        min-width: 250px;
+    }
+
+    #review-form-list {
+        flex-direction: row;
+        align-content: flex-start;
+        flex-wrap: wrap;
     }
 
     #review-form-list .review-form-list-row {

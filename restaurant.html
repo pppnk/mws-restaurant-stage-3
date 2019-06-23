@@ -62,41 +62,46 @@
     <section id="reviews-container" tabindex="0" aria-label="Reviews Section">
       <h2>Reviews</h2>
       <h3>Add Review</h3>
-      <div id="reviews-content">
-        <form id="review-form-list">
-          <div class="review-form-list-row">
-            <div class="review-form-item">
-              <label for="name">Name</label>
-              <input type="text" id="name" name="name" aria-label="name" autofocus>
-              <label for="rating">Rating</label>
-              <select id="rating" name="rating" aria-label="rating">
-                <option value=1 aria-label="Rating 1">1</option>
-                <option value=2 aria-label="Rating 2">2</option>
-                <option value=3 aria-label="Rating 3">3</option>
-                <option value=4 aria-label="Rating 4">4</option>
-                <option value=5 aria-label="Rating 5">5</option>
-              </select>
+      <div id="reviews-container-content">
+        <form action="javascript:;" id="add-review" onsubmit="return validateFormOnSubmit(this);">
+          <div id="review-form-list">
+            <div class="review-form-list-row">
+              <div class="review-form-item">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" aria-label="name" autofocus>
+                <label for="rating">Rating</label>
+                <select id="rating" name="rating" aria-label="rating">
+                  <option value=5 aria-label="Rating 5" selected>5</option>
+                  <option value=4 aria-label="Rating 4">4</option>
+                  <option value=3 aria-label="Rating 3">3</option>
+                  <option value=2 aria-label="Rating 2">2</option>
+                  <option value=1 aria-label="Rating 1">1</option>
+                </select>
+              </div>
             </div>
-          </div>
-          <div class="review-form-list-row">
-            <div class="review-form-item">
-              <label for="comment">Comment</label>
+            <div class="review-form-list-row">
+              <div class="review-form-item">
+                <label for="comment">Comment</label>
+              </div>
             </div>
-          </div>
-          <div class="review-form-list-row">
-            <div class="review-form-item">
-              <textarea name="comment" id="comment" cols="30" rows="10"></textarea>
+            <div class="review-form-list-row">
+              <div class="review-form-item">
+                <textarea name="comment" id="comment" cols="30" rows="10"></textarea>
+              </div>
             </div>
-          </div>
-          <div class="review-form-list-row">
-            <div class="review-form-item">
-              <input id="submit-review-button" type="submit" class="button" value="Submit" aria-label="Submit review">
+            <div class="review-form-list-row" id="review-form-errors-section">
+              <div class="review-form-item">
+                <label id="review-form-errors"></label>
+              </div>
+            </div>
+            <div class="review-form-list-row">
+              <div class="review-form-item">
+                <input id="submit-review-button" type="submit" class="button" value="Submit" aria-label="Submit review">
+              </div>
             </div>
           </div>
         </form>
-
         <ul id="reviews-list" tabindex="0" aria-label="Reviews"></ul>
-
       </div>
     </section>
     <!-- End reviews -->
@@ -113,6 +118,7 @@
   <!-- Database helpers -->
   <script type="application/javascript" charset="utf-8" src="js/idb_util.js"></script>
   <script type="text/javascript" src="js/dbhelper.js"></script>
+  <script type="text/javascript" src="service_worker.js"></script>
   <!-- Main javascript file -->
   <script type="text/javascript" src="js/restaurant_info.js"></script>
   <!-- Google Maps -->

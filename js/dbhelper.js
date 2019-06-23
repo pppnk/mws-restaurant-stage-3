@@ -13,33 +13,55 @@ const idbStore = (function() {
     switch (upgradeDB.oldVersion) {
       case 0:
         upgradeDB.createObjectStore("restaurants", {keyPath: "id"});
-        initStore();
+      case 1:
+        upgradeDB.createObjectStore("reviews", { keyPath: "id" })
+            .createIndex("restaurant_id", "restaurant_id");
+        upgradeDB.createObjectStore("pending", { keyPath: "id", autoIncrement: true });
     }
   });
 
-  function initStore(){
-    fetch(DBHelper.DATABASE_URL).then(function (response) {
-      return response.json();
-    }).then(function(restaurants){
+  function fetchAndStore(urlPostFix, transactionStore){
+    fetch(DBHelper.DATABASE_URL + urlPostFix).then(function (response) {
+      return response.clone().json();
+    }).then(function(response){
       dbPromise.then(function (db) {
         if (!db) return;
-        var tx = db.transaction('restaurants', 'readwrite');
-        var store = tx.objectStore('restaurants');
-        restaurants.forEach(function (restaurant) {
-          store.put(restaurant)
+        var tx = db.transaction(transactionStore, 'readwrite');
+        var store = tx.objectStore(transactionStore);
+        response.forEach(function (item) {
+          store.put(item)
         });
       });
-      callback(null, restaurants);
+      callback(null, response);
     }).catch(function (err) {
-      const error = (`Unable to store restaurants data ${err}`);
+      const error = (`Unable to store ${transactionStore} data ${err}`);
+      return error;
     });
   }
 
   return {
     dbPromise: (dbPromise),
-    initStore: (initStore)
+    fetchAndStore: (fetchAndStore)
   };
 })();
+
+/**
+ * Add a listener to process all the pending requests
+ * */
+window.addEventListener("load", event => {
+  if (!navigator.onLine) {
+    window.addEventListener('online', event => {
+      const notification = document.createElement("section");
+      const message = document.createElement("p");
+      DBHelper.sendPendingRequests();
+      message.innerHTML = 'Synchronized pending requests.';
+      notification.appendChild(message);
+      document.getElementById("maincontent").appendChild(notification);
+    });
+  } else {
+    DBHelper.sendPendingRequests();
+  }
+});
 
 /**
  * Common database helper functions.
@@ -177,7 +199,7 @@ class DBHelper {
     this.getRestaurants().then(restaurants => this.getNeighborhoods(restaurants));
     fetch(fetchURL, {method: "GET"}).then(response => {
       response.json().then(restaurants => {
-            idbStore.initStore();
+            idbStore.fetchAndStore('/restaurants', 'restaurants');
             callback(null, this.getNeighborhoods(restaurants));
       });
     }).catch(error => {
@@ -227,6 +249,97 @@ class DBHelper {
   }
 
   /**
+   * When online sends the pending requests stored in IndexedDB
+   * */
+  static async sendPendingRequests() {
+    await (function(){
+      idbStore.dbPromise.then(objStore => objStore.transaction('pending')
+                                          .objectStore('pending')
+                                          .getAll()
+      ).then(pendingRequests => {
+        if (!pendingRequests || pendingRequests.length < 1) {
+          return;
+        }
+        pendingRequests.map(pendingRequest => {
+          const request = new Request(pendingRequest.url, {
+            method: pendingRequest.method,
+            body: JSON.stringify(pendingRequest.body)
+          });
+          fetch(request).then(response => {
+            if (!response.ok) return;
+            idbStore.dbPromise.then(objStore => {
+              const store = objStore.transaction('pending', 'readwrite')
+                                    .objectStore('pending');
+              store.delete(pendingRequest.id);
+            });
+            return response.clone().json();
+          }).then(entry => {});
+        });
+      });
+    })();
+  }
+
+  /**
+   * Add the review
+   * */
+  static addReview(review, callback) {
+    const idbReview = { ...review };
+    idbStore.dbPromise.then(objStore => {
+      const store = objStore.transaction("reviews", "readwrite")
+                            .objectStore("reviews");
+      store.put(idbReview);
+      return idbReview;
+    }).then(storedReview => {
+      DBHelper.postRequest(DBHelper.DATABASE_URL + '/reviews', review).then(response => {
+        if (!response || typeof(response) == 'undefined' || !response.ok) {
+          const pendingReview = {
+            foreignKey: storedReview.id,
+            foreignStore: 'pending',
+            method: "POST",
+            url: DBHelper.DATABASE_URL + '/reviews',
+            body: review
+          };
+          idbStore.dbPromise.then(objStore => {
+            const store = objStore.transaction('pending', 'readwrite')
+                                  .objectStore('pending');
+            store.put(pendingReview);
+            return idbReview;
+          }).then(pending => {
+            callback(pending, response);
+          }).catch(err => {
+            callback(err, null);
+          });
+        } else {
+          callback(idbReview, null);
+        }
+      });
+    }).catch(err => {
+      callback(err, null);
+    });
+  }
+
+  /**
+   * Post Request
+   * */
+  // Post the Review to the Restful Server
+  static postRequest(url = "", data = {}) {
+    return fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8"
+      },
+      body: JSON.stringify(data)
+    }).then(response => {
+          if (!response.ok || response.status > 300) {
+            throw new Error(response.statusText);
+          }
+          return response;
+    }).catch(error => {
+      return error;
+    });
+  }
+
+  /**
    * Map marker for a restaurant.
    */
   static mapMarkerForRestaurant(restaurant, map) {
@@ -235,7 +348,7 @@ class DBHelper {
       {title: restaurant.name,
       alt: restaurant.name,
       url: DBHelper.urlForRestaurant(restaurant)
-      })
+      });
       marker.addTo(newMap);
     return marker;
   }
