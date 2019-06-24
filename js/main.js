@@ -175,7 +175,11 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
  */
 createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
-
+  // Favorite button section
+  let favoriteButton = document.createElement('button');
+  favoriteButton = DBHelper.setFavoriteButtonProperties(favoriteButton, restaurant);
+  li.append(favoriteButton);
+  // Image section
   const image = document.createElement('img');
   const imageSources = DBHelper.imageUrlForRestaurant(restaurant.id);
   image.className = 'restaurant-img';
@@ -184,23 +188,21 @@ createRestaurantHTML = (restaurant) => {
   image.sizes = imageSources.sizes;
   image.alt = `Photo of ${restaurant.name} restaurant`;
   li.append(image);
-
+  // Name section
   const name = document.createElement('h3');
   name.innerHTML = restaurant.name;
   li.append(name);
-
+  // Neighborhood section
   const neighborhood = document.createElement('p');
   neighborhood.innerHTML = restaurant.neighborhood;
   neighborhood.className = 'restaurant-neighborhood';
-
   li.append(neighborhood);
-
+  // Address section
   const address = document.createElement('p');
   address.innerHTML = restaurant.address;
   address.className = 'restaurant-address';
-
   li.append(address);
-
+  // Details button section
   const moreLabel = document.createAttribute('aria-label');
   moreLabel.value = restaurant.name;
   const more = document.createElement('button');
@@ -209,7 +211,6 @@ createRestaurantHTML = (restaurant) => {
   more.onclick = function(){
     window.location = DBHelper.urlForRestaurant(restaurant);
   };
-
   li.append(more);
 
   return li

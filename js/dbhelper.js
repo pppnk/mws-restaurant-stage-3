@@ -178,6 +178,61 @@ class DBHelper {
   }
 
   /**
+   * Sets the favorite status for a restaurant
+   * */
+  static setFavorite(id, markAsFavorite) {
+    return this.putRequest(`${DBHelper.DATABASE_URL}/restaurants/${id}/?is_favorite=${markAsFavorite}`).then(response => response).catch(error => {
+      console.log('Error while adding favorite: ' + error);
+      // Adds the request to the pending queue
+      const pendingRequest = {
+        foreignKey: id,
+        foreignStore: 'pending',
+        method: "PUT",
+        url: `${DBHelper.DATABASE_URL}/restaurants/${id}/?is_favorite=${markAsFavorite}`,
+        body: {}
+      };
+      idbStore.dbPromise.then(objStore => {
+        const store = objStore.transaction('pending', 'readwrite')
+            .objectStore('pending');
+        store.put(pendingRequest);
+      }).then(pending => pending).catch(err => err);
+    });
+  }
+
+  /**
+   * Sets the favorite element properties and calls to set/unset a favorite restaurant
+   * */
+  static setFavoriteButtonProperties(favoriteButton, restaurant) {
+    favoriteButton.setAttribute('aria-label', 'Mark as favorite button');
+    favoriteButton.className = 'favorite-control';
+    if (restaurant.is_favorite === 'true') {
+      favoriteButton.classList.add('active');
+      favoriteButton = DBHelper.setFavoriteAttributes(restaurant, favoriteButton, 'true', 'Unmark');
+    } else {
+      favoriteButton = DBHelper.setFavoriteAttributes(restaurant, favoriteButton, 'false', 'Mark');
+    }
+    favoriteButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (favoriteButton.classList.contains('active')) {
+        favoriteButton = DBHelper.setFavoriteAttributes(restaurant, favoriteButton, 'false', 'Mark');
+        DBHelper.setFavorite(restaurant.id, true);
+      } else {
+        favoriteButton = DBHelper.setFavoriteAttributes(restaurant, favoriteButton, 'true', 'Unmark');
+        DBHelper.setFavorite(restaurant.id, false);
+      }
+      favoriteButton.classList.toggle('active');
+    });
+    return favoriteButton;
+  }
+
+  static setFavoriteAttributes = (restaurant, element, pressed, textPrefix) => {
+    element.setAttribute('aria-pressed', `${pressed}`);
+    element.innerHTML = `${textPrefix} ${restaurant.name} as a favorite`;
+    element.title = `${textPrefix} ${restaurant.name} as a favorite`;
+    return element;
+  };
+
+  /**
    * Fetch reviews by restaurant ID
    */
   static getReviewsByRestaurant(id, callback) {
@@ -336,6 +391,22 @@ class DBHelper {
           return response;
     }).catch(error => {
       return error;
+    });
+  }
+
+  /**
+   * Put Request
+   * */
+  // Put the Review to the Restful Server
+  static putRequest(url = "") {
+    return new Promise(function(resolve, reject) {
+      fetch(url, {method: 'PUT'})
+          .then(() => {
+            resolve(true);
+          })
+          .catch((err) => {
+            return err;
+          });
     });
   }
 

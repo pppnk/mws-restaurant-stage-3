@@ -38,32 +38,46 @@ self.addEventListener('activate', function(event) {
 });
 
 self.addEventListener('fetch', function(event) {
-    if (!navigator.onLine) {
-        return respondWithCache(event);
+    if (event.request.method !== "GET") {
+        if (!navigator.onLine) {
+            let init = {
+                "status" : 303,
+                "statusText" : "network error"
+            };
+            event.respondWith(new Response(null, init));
+            return new Error("network connection failed");
+        }
+        event.respondWith(fetch(event.request).catch(err => {
+            return err;
+        }));
     } else {
         const url = new URL(event.request.url);
-        if (event.request.method === "GET" && url.port === "1337"){
-            const restaurantId = url.searchParams.get("restaurant_id");
-            let isReviewsRequest = url.pathname.split("/").filter(path => path === "reviews").length > 0;
-            isReviewsRequest = isReviewsRequest && restaurantId;
-            if(isReviewsRequest){
-                event.respondWith(getReviews(restaurantId).then(data => {
-                    return updateReviews(event).then(json => {
-                        json = JSON.stringify(json);
-                        return new Response(json);
+        if (!navigator.onLine) {
+            return respondWithCache(event);
+        } else {
+            if (url.port === "1337"){
+                const restaurantId = url.searchParams.get("restaurant_id");
+                let isReviewsRequest = url.pathname.split("/").filter(path => path === "reviews").length > 0;
+                isReviewsRequest = isReviewsRequest && restaurantId;
+                if(isReviewsRequest){
+                    event.respondWith(getReviews(restaurantId).then(data => {
+                        return updateReviews(event).then(json => {
+                            json = JSON.stringify(json);
+                            return new Response(json);
+                        }).catch(error => {
+                            console.log(error);
+                            return respondWithCache(event);
+                        });
                     }).catch(error => {
                         console.log(error);
                         return respondWithCache(event);
-                    });
-                }).catch(error => {
-                    console.log(error);
+                    }));
+                } else {
                     return respondWithCache(event);
-                }));
+                }
             } else {
                 return respondWithCache(event);
             }
-        } else {
-            return respondWithCache(event);
         }
     }
 });
@@ -71,7 +85,7 @@ self.addEventListener('fetch', function(event) {
 respondWithCache = (event) =>
     event.respondWith (
         caches.match(event.request).then(function(response) {
-            if (response !== undefined) {
+            if (response !== undefined || event.request.method === "PUT") {
                 return response;
             } else {
                 return fetch(event.request).then(function (response) {

@@ -160,6 +160,26 @@ nav h1 a {
   max-width: 300px;
 }
 
+#restaurants-list .favorite-control, #restaurant-favorite {
+    position: absolute;
+    width: 44px;
+    height: 40px;
+    border: 4px double gray;
+    margin: 10px 0 0 180px;
+    padding: 5px;
+    background-image: url('../img/no-fav.svg');
+    background-color: white;
+    background-repeat: no-repeat;
+    background-position: 6px 5px;
+    background-size: 24px;
+    cursor: pointer;
+    text-indent: -10000px;
+}
+
+#restaurants-list .favorite-control.active, #restaurants-list .favorite-control:hover {
+    background-image: url('../img/fav.svg');
+}
+
 #restaurants-list .restaurant-img {
   background-color: #ccc;
   display: block;
@@ -215,6 +235,12 @@ nav h1 a {
     width: 100%;
     max-width: 100%;
   }
+  #restaurants-list .favorite-control {
+    margin: 10px 0 0 150px;
+    width: 70px;
+    height: 70px;
+    background-size: 51px;
+  }
   .filter-options {
   }
   .filter-options h2 {
@@ -227,6 +253,9 @@ nav h1 a {
 @media screen and (min-width: 571px) {
   #restaurants-list li {
     width: calc(50% - 5px);
+  }
+  #restaurants-list .favorite-control {
+    margin: 10px 0 0 90px;
   }
 }
 
@@ -275,12 +304,28 @@ nav h1 a {
   line-height: 1.1;
 }
 
+#restaurant-img-container {
+    position: relative;
+}
+
 #restaurant-img {
   max-width: calc(100% - 40px);
   height: auto;
   margin: auto;
   padding: 20px;
   align-self: center;
+}
+
+#restaurant-favorite {
+    width: 60px;
+    height: 56px;
+    background-size: 40px;
+    top: 20px;
+    right: 40px;
+}
+
+#restaurant-favorite.active, #restaurant-favorite:hover {
+    background-image: url('../img/fav.svg');
 }
 
 #restaurant-address {
@@ -487,6 +532,14 @@ nav h1 a {
     #restaurant-presentation {
         flex: 1;
     }
+    #restaurant-favorite {
+        width: 44px;
+        height: 40px;
+        background-size: 24px;
+        border: 4px double gray;
+        top: 20px;
+        right: 40px;
+    }
     #restaurant-details {
         flex: 1;
     }
@@ -541,6 +594,14 @@ nav h1 a {
     #reviews-list li {
         min-width: 250px;
     }
+    #restaurant-favorite {
+        width: 44px;
+        height: 40px;
+        border: 4px double gray;
+        background-size: 24px;
+        top: 20px;
+        right: 40px;
+    }
     #restaurant-address {
         flex: 1;
         align-items: center;
@@ -591,7 +652,14 @@ nav h1 a {
     #reviews-list li {
         min-width: 250px;
     }
-
+    #restaurant-favorite {
+        width: 44px;
+        height: 40px;
+        border: 4px double gray;
+        background-size: 24px;
+        top: 20px;
+        right: 40px;
+    }
     #review-form-list {
         flex-direction: row;
         align-content: flex-start;

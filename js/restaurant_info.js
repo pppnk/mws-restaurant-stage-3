@@ -98,13 +98,21 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   image.alt = `Photo of ${restaurant.name} restaurant`;
   const cuisine = document.getElementById('restaurant-cuisine');
   cuisine.innerHTML = restaurant.cuisine_type;
-
+  let favoriteButton = document.getElementById('restaurant-favorite');
+  favoriteButton = DBHelper.setFavoriteButtonProperties(favoriteButton, restaurant);
   // fill operating hours
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
   }
   // fill reviews
   fillReviewsHTML();
+};
+
+setFavoriteAttributes = (restaurant, element, pressed, textPrefix) => {
+  element.setAttribute('aria-pressed', `${pressed}`);
+  element.innerHTML = `${textPrefix} ${restaurant.name} as a favorite`;
+  element.title = `${textPrefix} ${restaurant.name} as a favorite`;
+  return element;
 };
 
 /**
