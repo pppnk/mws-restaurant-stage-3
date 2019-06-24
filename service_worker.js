@@ -1,4 +1,4 @@
-const cacheVersion = 'mws-restaurant-static-v-3';
+const cacheVersion = 'mws-restaurant-static-v-2';
 let dbPromise;
 
 self.addEventListener("install", function(event) {

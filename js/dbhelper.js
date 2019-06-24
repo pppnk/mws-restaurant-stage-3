@@ -307,31 +307,35 @@ class DBHelper {
    * When online sends the pending requests stored in IndexedDB
    * */
   static async sendPendingRequests() {
-    await (function(){
-      idbStore.dbPromise.then(objStore => objStore.transaction('pending')
-                                          .objectStore('pending')
-                                          .getAll()
-      ).then(pendingRequests => {
-        if (!pendingRequests || pendingRequests.length < 1) {
-          return;
-        }
-        pendingRequests.map(pendingRequest => {
-          const request = new Request(pendingRequest.url, {
-            method: pendingRequest.method,
-            body: JSON.stringify(pendingRequest.body)
-          });
-          fetch(request).then(response => {
-            if (!response.ok) return;
-            idbStore.dbPromise.then(objStore => {
-              const store = objStore.transaction('pending', 'readwrite')
-                                    .objectStore('pending');
-              store.delete(pendingRequest.id);
-            });
-            return response.clone().json();
-          }).then(entry => {});
+    await this.processPendingRequests();
+  }
+
+  static processPendingRequests(){
+    idbStore.dbPromise.then(objStore => objStore.transaction('pending')
+        .objectStore('pending')
+        .getAll()
+    ).then(pendingRequests => {
+      if (!pendingRequests || pendingRequests.length < 1) {
+        return;
+      }
+      pendingRequests.map(pendingRequest => {
+        const request = new Request(pendingRequest.url, {
+          method: pendingRequest.method,
+          body: JSON.stringify(pendingRequest.body)
         });
+        fetch(request).then(response => {
+          if (!response.ok){
+            return;
+          }
+          idbStore.dbPromise.then(objStore => {
+            const store = objStore.transaction('pending', 'readwrite')
+                .objectStore('pending');
+            store.delete(pendingRequest.id);
+          });
+          return response.clone().json();
+        }).then(entry => {});
       });
-    })();
+    });
   }
 
   /**
