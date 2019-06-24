@@ -7,7 +7,7 @@ var markers = [];
 /**
  * Register the service worker
  */
-if ('serviceWorker' in navigator) {
+if (navigator.serviceWorker) {
   navigator.serviceWorker
       .register('/service_worker.js', {scope: "/"})
       .then(reg => {
