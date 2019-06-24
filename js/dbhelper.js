@@ -180,8 +180,17 @@ class DBHelper {
   /**
    * Sets the favorite status for a restaurant
    * */
-  static setFavorite(id, markAsFavorite) {
-    return this.putRequest(`${DBHelper.DATABASE_URL}/restaurants/${id}/?is_favorite=${markAsFavorite}`).then(response => response).catch(error => {
+  static setFavorite(id, markAsFavorite, restaurant) {
+    restaurant.is_favorite = markAsFavorite;
+    idbStore.dbPromise.then(function(db) {
+        let transaction = db.transaction('restaurants', 'readwrite');
+        let store = transaction.objectStore('restaurants');
+        console.log('Will update favorite to ' + restaurant.is_favorite);
+        store.put(restaurant);
+    });
+    return this.putRequest(`${DBHelper.DATABASE_URL}/restaurants/${id}/?is_favorite=${markAsFavorite}`).then(response => {
+        return restaurant;
+    }).catch(error => {
       console.log('Error while adding favorite: ' + error);
       // Adds the request to the pending queue
       const pendingRequest = {
@@ -196,6 +205,7 @@ class DBHelper {
             .objectStore('pending');
         store.put(pendingRequest);
       }).then(pending => pending).catch(err => err);
+      return restaurant;
     });
   }
 
@@ -205,7 +215,7 @@ class DBHelper {
   static setFavoriteButtonProperties(favoriteButton, restaurant) {
     favoriteButton.setAttribute('aria-label', 'Mark as favorite button');
     favoriteButton.className = 'favorite-control';
-    if (restaurant.is_favorite === 'true') {
+    if (restaurant.is_favorite === 'true' || restaurant.is_favorite === true) {
       favoriteButton.classList.add('active');
       favoriteButton = DBHelper.setFavoriteAttributes(restaurant, favoriteButton, 'true', 'Unmark');
     } else {
@@ -213,13 +223,12 @@ class DBHelper {
     }
     favoriteButton.addEventListener('click', (event) => {
       event.preventDefault();
-      if (favoriteButton.classList.contains('active')) {
-        favoriteButton = DBHelper.setFavoriteAttributes(restaurant, favoriteButton, 'false', 'Mark');
-        DBHelper.setFavorite(restaurant.id, true);
-      } else {
-        favoriteButton = DBHelper.setFavoriteAttributes(restaurant, favoriteButton, 'true', 'Unmark');
-        DBHelper.setFavorite(restaurant.id, false);
-      }
+      const isFavorite = restaurant.is_favorite === 'true' || restaurant.is_favorite === true;
+      const prefix = isFavorite? 'Unmark': 'Mark';
+      favoriteButton = DBHelper.setFavoriteAttributes(restaurant, favoriteButton, `${!isFavorite}`, prefix);
+      DBHelper.setFavorite(restaurant.id, !isFavorite, restaurant).then(updatedRestaurant => {
+          restaurant = updatedRestaurant;
+      });
       favoriteButton.classList.toggle('active');
     });
     return favoriteButton;
