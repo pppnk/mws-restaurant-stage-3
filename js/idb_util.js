@@ -274,7 +274,7 @@
                     }
                     items.push(cursor.value);
 
-                    if (count !== undefined && items.length === count) {
+                    if (count !== undefined && items.length == count) {
                         resolve(items);
                         return;
                     }
