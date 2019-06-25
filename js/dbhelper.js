@@ -26,8 +26,8 @@ const idbStore = (function() {
     }).then(function(response){
       dbPromise.then(function (db) {
         if (!db) return;
-        var tx = db.transaction(transactionStore, 'readwrite');
-        var store = tx.objectStore(transactionStore);
+        let tx = db.transaction(transactionStore, 'readwrite');
+        let store = tx.objectStore(transactionStore);
         response.forEach(function (item) {
           store.put(item)
         });
@@ -187,6 +187,13 @@ class DBHelper {
         let store = transaction.objectStore('restaurants');
         console.log('Will update favorite to ' + restaurant.is_favorite);
         store.put(restaurant);
+    });
+    idbStore.dbPromise.then(function(db) {
+      let tx = db.transaction("restaurants", 'readwrite');
+      let store = tx.objectStore("restaurants");
+      store.get(id).then(restaurant => {
+        console.log("Restaurant " + restaurant.name + " actually to favorite: " + restaurant.is_favorite);
+      });
     });
     return this.putRequest(`${DBHelper.DATABASE_URL}/restaurants/${id}/?is_favorite=${markAsFavorite}`).then(response => {
         return restaurant;
